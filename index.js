@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000;
 // jvuP5EIgV3QVQ5vF
@@ -21,7 +21,7 @@ const client = new MongoClient(uri, {
 });
 
 async function run() {
-    try {
+    try { 
         // await client.connect();
 
         const usersCollection = client.db("AssignmentDB").collection("assignment");
@@ -29,6 +29,24 @@ async function run() {
         app.get('/assignment', async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result)
+        })
+        // get single id using get method
+        app.get("/myAssignment/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id),
+            };
+            const result = await usersCollection.find(query).toArray();
+            res.send(result);
+        })
+        // get single id using delete method
+        app.delete("/myAssignment/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id),
+            };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
         })
 
         app.post('/assignment', async (req, res) => {
