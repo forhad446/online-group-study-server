@@ -21,7 +21,7 @@ const client = new MongoClient(uri, {
 });
 
 async function run() {
-    try { 
+    try {
         // await client.connect();
 
         const usersCollection = client.db("AssignmentDB").collection("assignment");
@@ -47,6 +47,26 @@ async function run() {
             };
             const result = await usersCollection.deleteOne(query);
             res.send(result);
+        })
+        // put trainer by id
+        app.put('/assignment/:id', async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+
+            const options = { upsert: true };
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    title: data.title,
+                    description: data.description,
+                    marks: data.marks,
+                    thumbnailImageUrl: data.thumbnailImageUrl,
+                    difficultyLevel: data.difficultyLevel,
+                    dueDate: data.dueDate,
+                },
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
         })
 
         app.post('/assignment', async (req, res) => {
