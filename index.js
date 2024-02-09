@@ -25,6 +25,7 @@ async function run() {
         // await client.connect();
 
         const usersCollection = client.db("AssignmentDB").collection("assignment");
+        const usersPost = client.db("AssignmentDB").collection("userPost");
 
         app.get('/assignment', async (req, res) => {
             const result = await usersCollection.find().toArray();
@@ -69,10 +70,17 @@ async function run() {
             res.send(result)
         })
 
+        // assignment posted
         app.post('/assignment', async (req, res) => {
             const data = req.body;
             console.log(data);
             const result = await usersCollection.insertOne(data);
+            res.send(result)
+        })
+        // submission assignment posted
+        app.post('/userPost', async (req, res) => {
+            const data = req.body;
+            const result = await usersPost.insertOne(data);
             res.send(result)
         })
 
