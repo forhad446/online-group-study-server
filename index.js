@@ -27,8 +27,14 @@ async function run() {
         const usersCollection = client.db("AssignmentDB").collection("assignment");
         const usersPost = client.db("AssignmentDB").collection("userPost");
 
+        // all assignment
         app.get('/assignment', async (req, res) => {
             const result = await usersCollection.find().toArray();
+            res.send(result)
+        })
+        // all userPosted assignment
+        app.get('/userPost', async(req, res) => {
+            const result = await usersPost.find().toArray();
             res.send(result)
         })
         // get single id using get method
@@ -49,7 +55,7 @@ async function run() {
             const result = await usersCollection.deleteOne(query);
             res.send(result);
         })
-        // put trainer by id
+        // put assignment by id
         app.put('/assignment/:id', async (req, res) => {
             const id = req.params.id;
             const data = req.body;
@@ -68,6 +74,23 @@ async function run() {
             };
             const result = await usersCollection.updateOne(filter, updateDoc, options);
             res.send(result)
+        })
+        // put check assignment by id
+        app.put('/userPost/:id', async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+
+            const options = { upsert: true };
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    marks: data.marks,
+                    feedback: data.feedback,
+                    status: 'completed',
+                },
+            };
+            const result = await usersPost.updateOne(filter, updateDoc, options);
+            // res.send(result)
         })
 
         // assignment posted
